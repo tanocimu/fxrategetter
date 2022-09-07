@@ -17,7 +17,8 @@
             color: blue;
         }
 
-        .loser_value {
+        .loser_value,
+        .loser_value2 {
             font-size: 5em;
             font-weight: bold;
             color: red;
@@ -67,6 +68,16 @@
     <div id="margin" class="usdjpy_value"></div>
     <div id="swap_point" class="usdjpy_value"></div>
     <div id="loser_value" class="loser_value"></div>
+    <div id="loser_value2" class="loser_value"></div>
+
+    <script language="JavaScript" type="text/javascript">
+        posNum = 7;
+
+        document.write('<img src="cts/counter_s.php?pos=0" width="0" height="0">');
+        for (i = posNum; i > 0; i--) {
+            document.write('<img src="cts/counter_s.php?pos=' + i + '">');
+        }
+    </script>
 
     <script>
         let rate = ('<?php echo $rate ?>');
@@ -80,6 +91,12 @@
         let swap = -89;
         let margin = deposit * lot;
 
+
+        let baseValue2 = 141.486;
+        let nowDiff2 = baseValue2 - parseFloat(rate);
+        let lot2 = 500;
+        let liabilities2 = (nowDiff2 * lot2 * 10000).toFixed(0);
+
         var loadDate = new Date();
         var distDate = new Date(2022, 5, 10);
         var diffMilliSec = loadDate - distDate;
@@ -90,6 +107,7 @@
         document.getElementById("margin").innerText = "margin:" + margin.toLocaleString();
         document.getElementById("swap_point").innerText = "SELL-swap:" + (lot * swap * swapDate).toLocaleString();
         document.getElementById("loser_value").innerText = "🐼 is " + Math.floor(liabilities).toLocaleString();
+        document.getElementById("loser_value2").innerText = "FKS is " + Math.floor(liabilities2).toLocaleString();
     </script>
 </body>
 
