@@ -69,6 +69,7 @@
     <div id="swap_point" class="usdjpy_value"></div>
     <div id="loser_value" class="loser_value"></div>
     <div id="loser_value2" class="loser_value"></div>
+    <div id="losscut_rate2" class="loser_value"></div>
 
     <script language="JavaScript" type="text/javascript">
         posNum = 7;
@@ -81,7 +82,6 @@
 
     <script>
         let rate = ('<?php echo $rate ?>');
-        console.log("exchange rate:", parseFloat(rate).toFixed(3));
 
         let baseValue = 129.2479;
         let nowDiff = baseValue - parseFloat(rate);
@@ -96,18 +96,21 @@
         let nowDiff2 = baseValue2 - parseFloat(rate);
         let lot2 = 500;
         let liabilities2 = (nowDiff2 * lot2 * 10000).toFixed(0);
+        let margin2 = 11400000;
+        let possession2 = 57120547;
+        let losscut_rate2 = parseFloat(rate) + ((possession2 + parseFloat(liabilities2) - 5700000.0) / 5000000.0);
 
         var loadDate = new Date();
         var distDate = new Date(2022, 5, 10);
         var diffMilliSec = loadDate - distDate;
         let swapDate = parseInt(diffMilliSec / 1000 / 60 / 60 / 24);
-        console.log("liabilities:", liabilities);
 
         document.getElementById("now_usdjpy").innerText = "USDJPY:" + parseFloat(rate).toFixed(3);
         document.getElementById("margin").innerText = "margin:" + margin.toLocaleString();
         document.getElementById("swap_point").innerText = "SELL-swap:" + (lot * swap * swapDate).toLocaleString();
         document.getElementById("loser_value").innerText = "🐼 is " + Math.floor(liabilities).toLocaleString();
         document.getElementById("loser_value2").innerText = "FKS is " + Math.floor(liabilities2).toLocaleString();
+        document.getElementById("losscut_rate2").innerText = "FKS losscut_rate " + parseFloat(losscut_rate2).toFixed(3);
     </script>
 </body>
 
