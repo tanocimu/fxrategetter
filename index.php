@@ -23,6 +23,18 @@
             font-weight: bold;
             color: red;
         }
+
+        table {
+            border: solid 1px #999;
+            border-collapse: collapse;
+            text-align: center;
+            margin: 10px auto;
+        }
+
+        td {
+            border: solid 1px #999;
+
+        }
     </style>
     <?php
     include("./db_write.php");
@@ -64,12 +76,97 @@
 
 <body>
     good luck to you<br />
-    <div id="now_usdjpy" class="usdjpy_value"></div>
-    <div id="margin" class="usdjpy_value"></div>
-    <div id="swap_point" class="usdjpy_value"></div>
-    <div id="loser_value" class="loser_value"></div>
-    <div id="loser_value2" class="loser_value"></div>
-    <div id="losscut_rate2" class="loser_value"></div>
+    <script>
+        console.log("ok");
+        let rate = ('<?php echo $rate ?>');
+
+        console.log("ok");
+        let baseValue = 129.2479;
+        let nowDiff = baseValue - parseFloat(rate);
+        let lot = 400;
+        let liabilities = (nowDiff * lot * 10000).toFixed(0);
+        let deposit = 56080;
+        let swap = -89;
+        let margin = deposit * lot;
+        let possession = 85000000;
+        let losscut_rate = parseFloat(rate) + ((possession + parseFloat(liabilities) - (margin / 2)) / 4000000.0);
+
+        var loadDate = new Date();
+        var distDate = new Date(2022, 4, 10); // real 22/5/10
+        var diffMilliSec = loadDate - distDate;
+        let swapDate = parseInt(diffMilliSec / 1000 / 60 / 60 / 24);
+
+
+        let baseValue2 = 141.486;
+        let nowDiff2 = baseValue2 - parseFloat(rate);
+        let lot2 = 500;
+        let liabilities2 = (nowDiff2 * lot2 * 10000).toFixed(0);
+        let deposit2 = 22800;
+        let margin2 = deposit2 * lot2;
+        let possession2 = 57120547;
+        let losscut_rate2 = parseFloat(rate) + ((possession2 + parseFloat(liabilities2) - 5700000.0) / 5000000.0);
+
+        var distDate2 = new Date(2022, 7, 24); // real 22/8/24
+        var diffMilliSec2 = loadDate - distDate2;
+        let swapDate2 = parseInt(diffMilliSec2 / 1000 / 60 / 60 / 24);
+
+        console.log(loadDate);
+        console.log(distDate);
+        console.log(distDate2);
+
+        var array = [];
+        array[0] = [
+            "loser name",
+            "資金",
+            "所持ロット",
+            "必要証拠金",
+            "必要証拠金合計",
+            "スワップAVG",
+            "スワップ合計",
+            "所持通貨平均レート",
+            "所持通貨現在レート",
+            "損失",
+            "予想ロスカットレート"
+        ];
+
+        array[1] = [
+            "🐼",
+            (85000000).toLocaleString(),
+            400,
+            (56570).toLocaleString(),
+            (400 * 56570).toLocaleString(),
+            -89,
+            (-89 * 400 * swapDate).toLocaleString(),
+            129.2479,
+            parseFloat(rate).toFixed(3),
+            Math.floor(liabilities).toLocaleString(),
+            parseFloat(losscut_rate).toFixed(3)
+        ];
+
+        array[2] = [
+            "FKSB",
+            (57120547).toLocaleString(),
+            500,
+            (56095).toLocaleString(),
+            (500 * 56095).toLocaleString(),
+            -123,
+            (-123 * 500 * swapDate2).toLocaleString(),
+            141.486,
+            parseFloat(rate).toFixed(3),
+            Math.floor(liabilities2).toLocaleString(),
+            parseFloat(losscut_rate2).toFixed(3)
+        ];
+
+        document.write("<table>");
+        for (i = 0; i < 3; i++) {
+            document.write("<tr>");
+            for (j = 0; j < 11; j++) {
+                document.write("<td>" + array[i][j] + "</td>");
+            }
+            document.write("</tr>");
+        }
+        document.write("</table>");
+    </script>
 
     <script language="JavaScript" type="text/javascript">
         posNum = 7;
@@ -78,39 +175,6 @@
         for (i = posNum; i > 0; i--) {
             document.write('<img src="cts/counter_s.php?pos=' + i + '">');
         }
-    </script>
-
-    <script>
-        let rate = ('<?php echo $rate ?>');
-
-        let baseValue = 129.2479;
-        let nowDiff = baseValue - parseFloat(rate);
-        let lot = 400;
-        let liabilities = (nowDiff * lot * 10000).toFixed(0);
-        let deposit = 56080;
-        let swap = -89;
-        let margin = deposit * lot;
-
-
-        let baseValue2 = 141.486;
-        let nowDiff2 = baseValue2 - parseFloat(rate);
-        let lot2 = 500;
-        let liabilities2 = (nowDiff2 * lot2 * 10000).toFixed(0);
-        let margin2 = 11400000;
-        let possession2 = 57120547;
-        let losscut_rate2 = parseFloat(rate) + ((possession2 + parseFloat(liabilities2) - 5700000.0) / 5000000.0);
-
-        var loadDate = new Date();
-        var distDate = new Date(2022, 5, 10);
-        var diffMilliSec = loadDate - distDate;
-        let swapDate = parseInt(diffMilliSec / 1000 / 60 / 60 / 24);
-
-        document.getElementById("now_usdjpy").innerText = "USDJPY:" + parseFloat(rate).toFixed(3);
-        document.getElementById("margin").innerText = "margin:" + margin.toLocaleString();
-        document.getElementById("swap_point").innerText = "SELL-swap:" + (lot * swap * swapDate).toLocaleString();
-        document.getElementById("loser_value").innerText = "🐼 is " + Math.floor(liabilities).toLocaleString();
-        document.getElementById("loser_value2").innerText = "FKS is " + Math.floor(liabilities2).toLocaleString();
-        document.getElementById("losscut_rate2").innerText = "FKS losscut_rate " + parseFloat(losscut_rate2).toFixed(3);
     </script>
 </body>
 
