@@ -50,6 +50,9 @@
         $echo_str = $echo_str . "$value1" . "\n";
     }
 
+    date_default_timezone_set('Asia/Tokyo');
+    $unitime = date('Y-m-d H:i:s');
+
     if (isset($_POST['value2'])) {
         $value2 = '';
         $value2 = $_POST['value2'];
@@ -57,7 +60,7 @@
         $value2 = stripslashes($value2);
 
         $echo_str = $echo_str . "$value2" . "\n";
-        $query1 = 'UPDATE exchange_rate SET rate = "' . $value2 . '", updatetime = NOW() WHERE exchange_rate.id = 1';
+        $query1 = 'UPDATE exchange_rate SET rate = "' . $value2 . '", updatetime = "' . $unitime . '" WHERE exchange_rate.id = 1';
         $result = db_prepare_sql($query1, $pdo);
     }
 
@@ -68,6 +71,7 @@
 
     foreach ($array as $row) {
         $rate = $row['rate'];
+        $updatetime = $row['updatetime'];
     }
 
     db_close($pdo);
@@ -79,34 +83,36 @@
     <script>
         console.log("ok");
         let rate = ('<?php echo $rate ?>');
+        let updateTime = ('<?php echo $updatetime ?>');
 
         console.log("ok");
-        let baseValue = 129.2479;
+        let baseValue = 143.968;
         let nowDiff = baseValue - parseFloat(rate);
-        let lot = 400;
+        let lot = 100;
         let liabilities = (nowDiff * lot * 10000).toFixed(0);
         let deposit = 56080;
         let swap = -89;
         let margin = deposit * lot;
-        let possession = 85000000;
+        let possession = 40000000;
         let losscut_rate = parseFloat(rate) + ((possession + parseFloat(liabilities) - (margin / 2)) / 4000000.0);
 
         var loadDate = new Date();
-        var distDate = new Date(2022, 4, 10); // real 22/5/10
+        var distDate = new Date(2022, 8, 13); // real 22/9/13
         var diffMilliSec = loadDate - distDate;
         let swapDate = parseInt(diffMilliSec / 1000 / 60 / 60 / 24);
 
 
-        let baseValue2 = 141.486;
+        let baseValue2 = 142.369;
         let nowDiff2 = baseValue2 - parseFloat(rate);
-        let lot2 = 500;
+        let lot2 = 400;
         let liabilities2 = (nowDiff2 * lot2 * 10000).toFixed(0);
         let deposit2 = 22800;
+        let swap2 = -123;
         let margin2 = deposit2 * lot2;
-        let possession2 = 57120547;
+        let possession2 = 57026247;
         let losscut_rate2 = parseFloat(rate) + ((possession2 + parseFloat(liabilities2) - 5700000.0) / 5000000.0);
 
-        var distDate2 = new Date(2022, 7, 24); // real 22/8/24
+        var distDate2 = new Date(2022, 8, 9); // real 22/8/24
         var diffMilliSec2 = loadDate - distDate2;
         let swapDate2 = parseInt(diffMilliSec2 / 1000 / 60 / 60 / 24);
 
@@ -131,13 +137,13 @@
 
         array[1] = [
             "🐼",
-            (85000000).toLocaleString(),
-            400,
-            (56570).toLocaleString(),
-            (400 * 56570).toLocaleString(),
-            -89,
-            (-89 * 400 * swapDate).toLocaleString(),
-            129.2479,
+            (possession).toLocaleString(),
+            lot,
+            (deposit).toLocaleString(),
+            (margin).toLocaleString(),
+            swap,
+            (swap * lot * swapDate).toLocaleString(),
+            baseValue,
             parseFloat(rate).toFixed(3),
             Math.floor(liabilities).toLocaleString(),
             parseFloat(losscut_rate).toFixed(3)
@@ -145,20 +151,21 @@
 
         array[2] = [
             "FKSB",
-            (57120547).toLocaleString(),
-            500,
-            (56095).toLocaleString(),
-            (500 * 56095).toLocaleString(),
-            -123,
-            (-123 * 500 * swapDate2).toLocaleString(),
-            141.486,
+            possession2.toLocaleString(),
+            lot2,
+            (deposit2).toLocaleString(),
+            (margin2).toLocaleString(),
+            swap2,
+            (swap2 * lot2 * swapDate2).toLocaleString(),
+            baseValue2,
             parseFloat(rate).toFixed(3),
             Math.floor(liabilities2).toLocaleString(),
             parseFloat(losscut_rate2).toFixed(3)
         ];
+        
 
         document.write("<table>");
-        for (i = 0; i < 3; i++) {
+        for (i = 0; i < array.length; i++) {
             document.write("<tr>");
             for (j = 0; j < 11; j++) {
                 document.write("<td>" + array[i][j] + "</td>");
@@ -166,6 +173,7 @@
             document.write("</tr>");
         }
         document.write("</table>");
+        document.write("更新時間 " + updateTime + "<br />");
     </script>
 
     <script language="JavaScript" type="text/javascript">
