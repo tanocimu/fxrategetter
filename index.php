@@ -47,21 +47,30 @@
         $value1 = htmlspecialchars($value1);
         $value1 = stripslashes($value1);
 
-        $echo_str = $echo_str . "$value1" . "\n";
+        //$echo_str = $echo_str . "$value1" . "\n";
     }
 
     date_default_timezone_set('Asia/Tokyo');
     $unitime = date('Y-m-d H:i:s');
+    $index = 0;
 
     if (isset($_POST['value2'])) {
-        $value2 = '';
-        $value2 = $_POST['value2'];
-        $value2 = htmlspecialchars($value2);
-        $value2 = stripslashes($value2);
+        $currencys = explode('@',$_POST['value2'], 5);
 
-        $echo_str = $echo_str . "$value2" . "\n";
-        $query1 = 'UPDATE exchange_rate SET rate = "' . $value2 . '", updatetime = "' . $unitime . '" WHERE exchange_rate.id = 1';
-        $result = db_prepare_sql($query1, $pdo);
+        foreach($currencys as $row )
+        {
+            $index++;
+
+            $rows = explode('=',$row, 2);
+            $currency = htmlspecialchars($rows[0]);
+            $currency = stripslashes($currency);
+
+            $rate = htmlspecialchars($rows[1]);
+            $rate = stripslashes($rate);
+
+            $query1 = 'UPDATE exchange_rate SET currency = "' . $currency . '", rate = "' . $rate . '", updatetime = "' . $unitime . '" WHERE exchange_rate.id = ' . $index;
+            $result = db_prepare_sql($query1, $pdo);
+        }
     }
 
 
@@ -102,9 +111,9 @@
         let swapDate = parseInt(diffMilliSec / 1000 / 60 / 60 / 24);
 
 
-        let baseValue2 = 142.369;
+        let baseValue2 = 144.299;
         let nowDiff2 = baseValue2 - parseFloat(rate);
-        let lot2 = 400;
+        let lot2 = 270;
         let liabilities2 = (nowDiff2 * lot2 * 10000).toFixed(0);
         let deposit2 = 22800;
         let swap2 = -123;
@@ -112,7 +121,7 @@
         let possession2 = 57026247;
         let losscut_rate2 = parseFloat(rate) + ((possession2 + parseFloat(liabilities2) - 5700000.0) / 5000000.0);
 
-        var distDate2 = new Date(2022, 8, 9); // real 22/8/24
+        var distDate2 = new Date(2022, 8, 13); // real 22/9/13
         var diffMilliSec2 = loadDate - distDate2;
         let swapDate2 = parseInt(diffMilliSec2 / 1000 / 60 / 60 / 24);
 
@@ -184,6 +193,17 @@
             document.write('<img src="cts/counter_s.php?pos=' + i + '">');
         }
     </script>
-</body>
+
+<form action="" method="post">
+<select name="losername">
+<option value="1">🐼</option>
+<option value="2">FSKB</option>
+</select>
+<input type="text" value="">
+<input type="text" value="">
+<input type="submit" value="送信"><input type="reset" value="リセット">
+</form>
+
+    </body>
 
 </html>
