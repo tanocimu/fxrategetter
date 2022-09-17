@@ -9,6 +9,8 @@
     <style>
         * {
             text-align: center;
+            margin:0;
+            padding:0;
         }
 
         .usdjpy_value {
@@ -28,13 +30,39 @@
             border: solid 1px #999;
             border-collapse: collapse;
             text-align: center;
-            margin: 10px auto;
+            width:100%;
         }
 
-        td {
+        .rate{
+            background:#263238;
+            color:#FF7043;
+            border:0;
+        }
+
+        .rate tr{
+            width:calc(20vw - 2px);
             border: solid 1px #999;
-
+            float:left;
+            border-collapse: collapse;
         }
+
+        .rate td{
+            animation: flash 0.3s linear infinite;
+            text-align:center;
+            width:50%;
+            float:left;
+            margin:10px 0px;
+        }
+
+        @keyframes flash {
+  0%,100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
     </style>
     <?php
     include("./db_write.php");
@@ -60,13 +88,23 @@
 </head>
 
 <body>
-    <p id="RealtimeRatearea">rate</p>
+    <table class="rate">
+        <tr><td>USD/JPY</td><td id="usdjpyrate"></td></tr>
+        <tr><td>GBP/JPY</td><td id="gbpjpyrate"></td></tr>
+        <tr><td>EUR/JPY</td><td id="eurjpyrate"></td></tr>
+        <tr><td>AUD/JPY</td><td id="audjpyrate"></td></tr>
+        <tr><td>XAU/USD</td><td id="xauusdrate"></td></tr>
+    </table>
+    <p id="updatetime"></p>
     good luck to you<br />
     <script>
         const promise = fetch('http://localhost/fxrategetter/json.php');
+        let tmprate;
+
         let result = promise.then(response => response.json())
             .then(data => {
                 show_rate(data);
+                setInterval('show_rate(data)',1000);
             });
 
         function show_rate(data) {
@@ -77,12 +115,16 @@
                 console.log(new_rate, js_array[new_rate]);
             }
 
-            let rate = js_array["USDJPY"];
-            let updateTime = js_array["updatetime"];
+            document.getElementById("usdjpyrate").innerHTML = js_array["USD/JPY"];
+            document.getElementById("gbpjpyrate").innerHTML = js_array["GBP/JPY"];
+            document.getElementById("eurjpyrate").innerHTML = js_array["EUR/JPY"];
+            document.getElementById("audjpyrate").innerHTML = js_array["AUD/JPY"];
+            document.getElementById("xauusdrate").innerHTML = js_array["XAU/USD"];
+            document.getElementById("updatetime").innerHTML = js_array["updatetime"];
 
-            document.write(rate + updateTime);
-
+            tmprate = js_array;
         }
+
 
 
         /*
