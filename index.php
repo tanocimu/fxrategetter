@@ -1,8 +1,11 @@
 <?php
     include "db_write.php";
     if (isset($_POST['add']) && isset($_POST['comment'])) {
+        date_default_timezone_set('Asia/Tokyo');
+        $unitime = date('Y-m-d H:i:s');
+
         $pdo = db_access();
-        $query = "INSERT INTO loser_comment (id, comment, updatetime) VALUES (NULL, '" . $_POST['comment'] . "', current_timestamp())";
+        $query = "INSERT INTO loser_comment (id, comment, updatetime) VALUES (NULL, '" . $_POST['comment'] . "', '".$unitime."')";
         db_prepare_sql($query, $pdo);
         db_close($pdo);
 		header('Location: ./');
