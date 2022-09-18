@@ -1,3 +1,14 @@
+<?php
+    include "db_write.php";
+    if (isset($_POST['add']) && isset($_POST['comment'])) {
+        $pdo = db_access();
+        $query = "INSERT INTO loser_comment (id, comment, updatetime) VALUES (NULL, '" . $_POST['comment'] . "', current_timestamp())";
+        db_prepare_sql($query, $pdo);
+        db_close($pdo);
+		header('Location: ./');
+		exit;
+    }
+?>
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -39,37 +50,28 @@
         <h2>Good Luck to You</h2>
         <div class="left_box">
             <div class="message_box">
-                <div id="input_form">
                     <form action="index.php" method="post">
-                        <input type="text" name="comment" size="100">
-                        <button type="submit" name="add">ADD</button>
+                        <input type="text" name="comment">
+                        <button type="submit" name="add" maxlength="100">ADD</button>
                     </form>
-                </div>
-                <?php
-                if (isset($_POST['add']) && isset($_POST['comment'])) {
-                    include "db_write.php";
-                    $pdo = db_access();
-                    $query = "INSERT INTO loser_comment (id, comment, updatetime) VALUES (NULL, '" . $_POST['comment'] . "', current_timestamp())";
-                    db_prepare_sql($query, $pdo);
-                    db_close($pdo);
-                    $_POST['comment'] = "";
-                }
-                ?>
             </div>
             <?php
             $pdo = db_access();
-            $query = "SELECT * FROM loser_comment";
+            $query = "SELECT * FROM loser_comment ORDER BY loser_comment.id DESC LIMIT 100";
             $result = db_prepare_sql($query, $pdo);
             db_close($pdo);
 
+            echo "<div class='comment_wrapper'>";
             foreach ($result as $row) {
-                echo "<div class='comment'>";
-                echo $row['comment']."&nbsp&nbsp".$row['updatetime'];
+                echo "<div class='comment_box'>";
+                echo "<p class='comment'>".$row['comment']."</p>";
+                echo "<p class='comment_time'>".$row['updatetime']."</p>";
                 echo "</div>";
             }
+            echo "</div>";
             ?>
         </div>
-        <div class="right_box">right</div>
+        <div class="right_box">no information</div>
     </div>
     <footer>
         <p id="updatetime"></p>

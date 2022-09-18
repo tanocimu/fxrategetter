@@ -22,11 +22,49 @@ header {
 
 .left_box {
     position: absolute;
-    border: solid 1px #263238;
+   /* border: solid 1px #263238;*/
     width: 50vw;
     height: calc(100vh - 250px);
     top: 57px;
     left: 7px;
+}
+
+.message_box input[type="text"]{
+    width: calc(95% - 60px);
+    height: 30px;
+}
+
+.message_box button {
+    color:#ffffff;
+    width:60px;
+    height:30px;
+    background-color: #29B6F6;
+    border:0;
+    border-radius: 5px;
+}
+
+.comment_wrapper{
+    height: calc(100vh - 283px);
+    overflow-y: scroll;
+    scrollbar-color: rebeccapurple green;
+    scrollbar-width: thin;
+}
+
+.comment_box {
+    margin-top:15px;
+    width: 100%;
+    height:17px;
+}
+
+.comment {
+    word-break : break-all;
+    width: calc(100% - 200px);
+    float:left;
+}
+
+.comment_time {
+    width: 200px;
+    float:left;
 }
 
 .right_box {
