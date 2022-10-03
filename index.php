@@ -74,18 +74,15 @@
             echo "</div>";
             ?>
         </div>
-        <div class="right_box">no information</div>
+        <div class="right_box">
+            <div class="equity">資産 <label id="equity"></label></div>
+            <div class="nextlevel">次のレベルまで <label id="nextlevel"></label></div>
+            <div class="traderLevel">LEVEL <label id="traderLevel"></label></div>
+       
+        </div>
     </div>
     <footer>
         <p id="updatetime"></p>
-        <script language="JavaScript" type="text/javascript">
-            posNum = 7;
-
-            document.write('<img src="cts/counter_s.php?pos=0" width="0" height="0">');
-            for (i = posNum; i > 0; i--) {
-                document.write('<img src="cts/counter_s.php?pos=' + i + '">');
-            }
-        </script>
     </footer>
 
     <script>
@@ -95,7 +92,13 @@
         const id_eurjpy = document.getElementById("eurjpyrate");
         const id_audjpy = document.getElementById("audjpyrate");
         const id_xauusd = document.getElementById("xauusdrate");
+
+        const id_equity = document.getElementById("equity");
+        const id_level = document.getElementById("traderLevel");
+        const id_nextlevel = document.getElementById("nextlevel");        
+
         const id_updatetime = document.getElementById("updatetime");
+        const maney_level = [10000,11000,12100,13310,14641,16105,17716,19487,21436,23579,25937,28531,31384,34523,37975,41772,45950,50545,55599,61159,67275,74002,81403,89543,98497,108347,119182,131100,144210,158631,174494,191943,211138,232252,255477,281024,309127,340039,374043,411448,452593,497852,547637,602401,662641,728905,801795,881975,970172,1067190,1173909,1291299,1420429,1562472,1718719,1890591,2079651,2287616,2516377,2768015,3044816,3349298,3684228,4052651,4457916,4903707,5394078,5933486,6526834,7179518,7897470,8687217,9555938,10511532,11562685,12718954,13990849,15389934,16928927,18621820,20484002,22532402,24785643,27264207,29990628,32989690,36288659,39917525,43909278,48300206,53130226,58443249,64287574,70716331,77787964,85566760,94123437,103535780];
 
         const recieve_postdata = () => {
             let promise = fetch('http://localhost/fxrategetter/json.php');
@@ -105,20 +108,28 @@
                 });
         }
 
+        function level_check(equity_maney){
+            let level = 0;
+            for(var item in maney_level){
+                level++;
+                if(maney_level[item] >= equity_maney)
+                {
+                    id_nextlevel.innerHTML = (maney_level[level - 1] - equity_maney).toLocaleString();
+                    id_level.innerHTML = (level - 1);
+                    break;
+                }
+            }
+        }
+
         function show_rate(data) {
             let js_text = JSON.stringify(data);
             let js_array = JSON.parse(js_text);
 
-            /*
-            for (new_rate in js_array) {
-                console.log(new_rate, js_array[new_rate]);
-            }
-            */
             if (tmp_js_array != null) {
                 // 前回値との差分から上昇か下降かを決める
                 for (new_rate in js_array) {
-                    //let diff = tmp_js_array[new_rate] - js_array[new_rate];
-                    let diff = 0;
+                    let diff = tmp_js_array[new_rate] - js_array[new_rate];
+ 
                     if (diff == 0) {
                         style_change(new_rate, diff);
                     } else if (diff > 0) {
@@ -129,12 +140,15 @@
                 }
             }
 
-            id_usdjpy.innerHTML = js_array["USDJPY"];
-            id_gbpjpy.innerHTML = js_array["GBPJPY"];
-            id_eurjpy.innerHTML = js_array["EURJPY"];
-            id_audjpy.innerHTML = js_array["AUDJPY"];
-            id_xauusd.innerHTML = js_array["XAUUSD"];
+            id_usdjpy.innerHTML = parseFloat(js_array["USDJPY"]).toFixed(3);
+            id_gbpjpy.innerHTML = parseFloat(js_array["GBPJPY"]).toFixed(3);
+            id_eurjpy.innerHTML = parseFloat(js_array["EURJPY"]).toFixed(3);
+            id_audjpy.innerHTML = parseFloat(js_array["AUDJPY"]).toFixed(3);
+            id_xauusd.innerHTML = parseFloat(js_array["XAUUSD"]).toFixed(2);
+            id_equity.innerHTML = parseFloat(js_array["Equity"]).toLocaleString();
             id_updatetime.innerHTML = "updatetime:" + js_array["updatetime"];
+
+            level_check(js_array["Equity"]);
 
             tmp_js_array = js_array;
         }

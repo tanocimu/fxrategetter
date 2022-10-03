@@ -14,7 +14,7 @@
     $index = 0;
 
     if (isset($_POST['value2'])) {
-        $currencys = explode('@', $_POST['value2'], 5);
+        $currencys = explode('@', $_POST['value2'], 6);
 
         foreach ($currencys as $row) {
             $index++;
