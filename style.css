@@ -135,17 +135,15 @@ table {
     color: #76FF03;
 }
 
-.traderLevel{
+.traderLevel {
     color: #FFC107;
 }
 
-.traderLevel label{
-    font-size:77px;
+.traderLevel label {
+    font-size: 77px;
     font-weight: bold;
     color: #FFC107;
 }
-
-
 
 .rate tr {
     width: calc(20vw - 2px);
@@ -198,5 +196,71 @@ footer {
 
     50% {
         opacity: 0;
+    }
+}
+
+@media screen and (max-width:500px) {
+    .rate tr {
+        width: calc(48vw - 2px);
+        border-right: solid 1px #999;
+        float: left;
+        border-collapse: collapse;
+    }
+
+    .main_wrapper {
+        width: 100%;
+        height: calc(100vh - 250px);
+        padding: 10px;
+    }
+
+    .left_box {
+        width: 100%;
+        height: 250px;
+        top: auto;
+        bottom: 0px;
+        left: 0px;
+    }
+
+    .right_box {
+        width: 100%;
+        height: calc(100vh - 600px);
+        top: 57px;
+        right: 7px;
+    }
+
+    .comment_wrapper {
+        position:absolute;
+        top:40px;
+        left: 5px;
+        width: calc(100% - 30px);
+        height: 256px;
+        overflow-y: scroll;
+        scrollbar-color: rebeccapurple green;
+        scrollbar-width: thin;
+    }
+
+    .message_box {
+        width: 100%;
+        position: relative;
+    }
+
+    .message_box input[type="text"] {
+        position:absolute;
+        top:5px;
+        left: 5px;
+        width: calc(95% - 90px);
+        height: 30px;
+    }
+
+    .message_box button {
+        position:absolute;
+        color: #ffffff;
+        width: 60px;
+        height: 30px;
+        background-color: #29B6F6;
+        border: 0;
+        border-radius: 5px;
+        top:5px;
+        right:30px;
     }
 }

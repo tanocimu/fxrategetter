@@ -1,16 +1,16 @@
 <?php
-    include "db_write.php";
-    if (isset($_POST['add']) && isset($_POST['comment'])) {
-        date_default_timezone_set('Asia/Tokyo');
-        $unitime = date('Y-m-d H:i:s');
+include "db_write.php";
+if (isset($_POST['add']) && isset($_POST['comment'])) {
+    date_default_timezone_set('Asia/Tokyo');
+    $unitime = date('Y-m-d H:i:s');
 
-        $pdo = db_access();
-        $query = "INSERT INTO loser_comment (id, comment, updatetime) VALUES (NULL, '" . $_POST['comment'] . "', '".$unitime."')";
-        db_prepare_sql($query, $pdo);
-        db_close($pdo);
-		header('Location: ./');
-		exit;
-    }
+    $pdo = db_access();
+    $query = "INSERT INTO loser_comment (id, comment, updatetime) VALUES (NULL, '" . $_POST['comment'] . "', '" . $unitime . "')";
+    db_prepare_sql($query, $pdo);
+    db_close($pdo);
+    header('Location: ./');
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -53,10 +53,10 @@
         <h2>Good Luck to You</h2>
         <div class="left_box">
             <div class="message_box">
-                    <form action="index.php" method="post">
-                        <input type="text" name="comment">
-                        <button type="submit" name="add" maxlength="100">ADD</button>
-                    </form>
+                <form action="index.php" method="post">
+                    <input type="text" name="comment">
+                    <button type="submit" name="add" maxlength="100">ADD</button>
+                </form>
             </div>
             <?php
             $pdo = db_access();
@@ -67,18 +67,19 @@
             echo "<div class='comment_wrapper'>";
             foreach ($result as $row) {
                 echo "<div class='comment_box'>";
-                echo "<p class='comment'>".$row['comment']."</p>";
-                echo "<p class='comment_time'>".$row['updatetime']."</p>";
+                echo "<p class='comment'>" . $row['comment'] . "</p>";
+                echo "<p class='comment_time'>" . $row['updatetime'] . "</p>";
                 echo "</div>";
             }
             echo "</div>";
             ?>
         </div>
         <div class="right_box">
-            <div class="equity">資産 <label id="equity"></label></div>
+            <div class="equity">耐久値 <label id="equity"></label></div>
             <div class="nextlevel">次のレベルまで <label id="nextlevel"></label></div>
             <div class="traderLevel">LEVEL <label id="traderLevel"></label></div>
-       
+            <div class="previouslevel">あと <label id="previouslevel"></label> でレベルダウン</div>
+
         </div>
     </div>
     <footer>
@@ -87,18 +88,32 @@
 
     <script>
         let tmp_js_array;
+        // exchange rate
         const id_usdjpy = document.getElementById('usdjpyrate');
         const id_gbpjpy = document.getElementById("gbpjpyrate");
         const id_eurjpy = document.getElementById("eurjpyrate");
         const id_audjpy = document.getElementById("audjpyrate");
         const id_xauusd = document.getElementById("xauusdrate");
 
+        // user infomation
         const id_equity = document.getElementById("equity");
         const id_level = document.getElementById("traderLevel");
-        const id_nextlevel = document.getElementById("nextlevel");        
+        const id_nextlevel = document.getElementById("nextlevel");
+        const id_previouslevel = document.getElementById("previouslevel");
 
         const id_updatetime = document.getElementById("updatetime");
-        const maney_level = [10000,11000,12100,13310,14641,16105,17716,19487,21436,23579,25937,28531,31384,34523,37975,41772,45950,50545,55599,61159,67275,74002,81403,89543,98497,108347,119182,131100,144210,158631,174494,191943,211138,232252,255477,281024,309127,340039,374043,411448,452593,497852,547637,602401,662641,728905,801795,881975,970172,1067190,1173909,1291299,1420429,1562472,1718719,1890591,2079651,2287616,2516377,2768015,3044816,3349298,3684228,4052651,4457916,4903707,5394078,5933486,6526834,7179518,7897470,8687217,9555938,10511532,11562685,12718954,13990849,15389934,16928927,18621820,20484002,22532402,24785643,27264207,29990628,32989690,36288659,39917525,43909278,48300206,53130226,58443249,64287574,70716331,77787964,85566760,94123437,103535780];
+        const experience_table = [
+            0, 10000, 11000, 12100, 13310, 14641, 16105, 17716, 19487, 21436,
+            23579, 25937, 28531, 31384, 34523, 37975, 41772, 45950, 50545, 55599,
+            61159, 67275, 74002, 81403, 89543, 98497, 108347, 119182, 131100, 144210,
+            158631, 174494, 191943, 211138, 232252, 255477, 281024, 309127, 340039, 374043,
+            411448, 452593, 497852, 547637, 602401, 662641, 728905, 801795, 881975, 970172,
+            1067190, 1173909, 1291299, 1420429, 1562472, 1718719, 1890591, 2079651, 2287616, 2516377,
+            2768015, 3044816, 3349298, 3684228, 4052651, 4457916, 4903707, 5394078, 5933486, 6526834,
+            7179518, 7897470, 8687217, 9555938, 10511532, 11562685, 12718954, 13990849, 15389934, 16928927,
+            18621820, 20484002, 22532402, 24785643, 27264207, 29990628, 32989690, 36288659, 39917525, 43909278,
+            48300206, 53130226, 58443249, 64287574, 70716331, 77787964, 85566760, 94123437, 103535780
+        ];
 
         const recieve_postdata = () => {
             let promise = fetch('http://localhost/fxrategetter/json.php');
@@ -108,16 +123,16 @@
                 });
         }
 
-        function level_check(equity_maney){
+        function level_check(equity_maney) {
             let level = 0;
-            for(var item in maney_level){
-                level++;
-                if(maney_level[item] >= equity_maney)
-                {
-                    id_nextlevel.innerHTML = (maney_level[level - 1] - equity_maney).toLocaleString();
-                    id_level.innerHTML = (level - 1);
+            for (var item in experience_table) {
+                if (experience_table[item] >= equity_maney) {
+                    id_nextlevel.innerHTML = (experience_table[item] - equity_maney).toLocaleString();
+                    id_level.innerHTML = (level);
+                    id_previouslevel.innerHTML = (equity_maney - experience_table[item - 1]).toLocaleString()
                     break;
                 }
+                level++;
             }
         }
 
@@ -129,7 +144,7 @@
                 // 前回値との差分から上昇か下降かを決める
                 for (new_rate in js_array) {
                     let diff = tmp_js_array[new_rate] - js_array[new_rate];
- 
+
                     if (diff == 0) {
                         style_change(new_rate, diff);
                     } else if (diff > 0) {
@@ -182,12 +197,12 @@
                 currency.classList.remove("rateup");
                 currency.classList.remove("flashing");
                 currency.style.color = "#76FF03";
-            } else if (diff > 0) {
+            } else if (diff < 0) {
                 currency.classList.remove("ratedown");
                 currency.classList.add("rateup");
                 currency.classList.add("flashing");
                 currency.style.color = "#FF8A65";
-            } else if (diff < 0) {
+            } else if (diff > 0) {
                 currency.classList.add("ratedown");
                 currency.classList.remove("rateup");
                 currency.classList.add("flashing");
