@@ -79,7 +79,7 @@ if (isset($_POST['add']) && isset($_POST['comment'])) {
             <div class="nextlevel">次のレベルまで <label id="nextlevel"></label></div>
             <div class="traderLevel">LEVEL <label id="traderLevel"></label></div>
             <div class="previouslevel">あと <label id="previouslevel"></label> でレベルダウン</div>
-
+            <div class="previouslevel">あと <label id="previouslevel2"></label> でレベル2ダウン</div>
         </div>
     </div>
     <footer>
@@ -100,6 +100,7 @@ if (isset($_POST['add']) && isset($_POST['comment'])) {
         const id_level = document.getElementById("traderLevel");
         const id_nextlevel = document.getElementById("nextlevel");
         const id_previouslevel = document.getElementById("previouslevel");
+        const id_previouslevel2 = document.getElementById("previouslevel2");
 
         const id_updatetime = document.getElementById("updatetime");
         const experience_table = [
@@ -129,7 +130,8 @@ if (isset($_POST['add']) && isset($_POST['comment'])) {
                 if (experience_table[item] >= equity_maney) {
                     id_nextlevel.innerHTML = (experience_table[item] - equity_maney).toLocaleString();
                     id_level.innerHTML = (level);
-                    id_previouslevel.innerHTML = (equity_maney - experience_table[item - 1]).toLocaleString()
+                    id_previouslevel.innerHTML = (equity_maney - experience_table[item - 1]).toLocaleString();
+                    id_previouslevel2.innerHTML = (equity_maney - experience_table[item - 2]).toLocaleString();
                     break;
                 }
                 level++;
